@@ -1,0 +1,145 @@
+{
+  "note": "Representative public images used for the local Budmat catalog. These are not photos of Budmat's own inventory.",
+  "sources": [
+    {
+      "assets": ["/catalog/products/river-sand.jpg"],
+      "title": "Sand Pile",
+      "author": "Peter Griffin",
+      "license": "CC0 Public Domain",
+      "source": "https://www.publicdomainpictures.net/en/view-image.php?image=41267&picture=sand-pile"
+    },
+    {
+      "assets": [
+        "/catalog/products/granite-crushed-stone-5-20.jpg",
+        "/catalog/products/granite-screening.jpg"
+      ],
+      "title": "Crushed Granite Texture",
+      "author": "Paul The Writer",
+      "license": "CC0",
+      "source": "https://commons.wikimedia.org/wiki/File:Crushed_Granite_Texture.jpg"
+    },
+    {
+      "assets": [
+        "/catalog/products/granite-crushed-stone-20-40.jpg",
+        "/catalog/products/granite-crushed-stone-40-70.jpg"
+      ],
+      "title": "Sunlit Crushed Stones",
+      "author": "Paul The Writer",
+      "license": "CC0",
+      "source": "https://commons.wikimedia.org/wiki/File:Sunlit_Crushed_Stones.jpg"
+    },
+    {
+      "assets": ["/catalog/products/rubble-stone.jpg"],
+      "title": "Riprap",
+      "author": "Unknown",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Riprap.jpg"
+    },
+    {
+      "assets": ["/catalog/products/cement-m550-25kg.jpg"],
+      "title": "Portland Cement Bags",
+      "author": "KVDP",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Portland_Cement_Bags.jpg"
+    },
+    {
+      "assets": ["/catalog/products/brick-common-m100.jpg"],
+      "title": "Red Bricks Stack on Sidewalk of Lane 212, Section 5, Minsheng East Road, Taipei",
+      "author": "玄史生",
+      "license": "CC0",
+      "source": "https://commons.wikimedia.org/wiki/File:Red_Bricks_Stack_on_Sidewalk_of_Lane_212,_Section_5,_Minsheng_East_Road,_Taipei_20160829.jpg"
+    },
+    {
+      "assets": [
+        "/catalog/products/aerated-block-100-200-600.jpg",
+        "/catalog/products/aerated-block-150-200-600.jpg",
+        "/catalog/products/aerated-block-200-300-600.jpg"
+      ],
+      "title": "Foot mohr 2015 aerated concrete 24x11cm (2)",
+      "author": "Vagabundus",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Foot_mohr_2015_aerated_concrete_24x11cm_(2).jpg"
+    },
+    {
+      "assets": [
+        "/catalog/products/concrete-ring-ks-2m.jpg",
+        "/catalog/products/concrete-ring-ks-15m.jpg",
+        "/catalog/products/concrete-ring-ks-12m.jpg",
+        "/catalog/products/concrete-ring-well-09m.jpg",
+        "/catalog/products/concrete-ring-repair.jpg"
+      ],
+      "title": "Concrete rings",
+      "author": "Monoklon",
+      "license": "CC0",
+      "source": "https://commons.wikimedia.org/wiki/File:Concrete_rings.jpg"
+    },
+    {
+      "assets": [
+        "/catalog/products/concrete-cover-2m.jpg",
+        "/catalog/products/concrete-cover-15m.jpg",
+        "/catalog/products/concrete-cover-12m.jpg",
+        "/catalog/products/concrete-cover-09m.jpg"
+      ],
+      "title": "Concrete cover",
+      "author": "OpenCage",
+      "license": "CC BY-SA 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Concrete_cover_(12730589).jpg"
+    },
+    {
+      "assets": ["/catalog/equipment/auto-crane-service.jpg"],
+      "title": "Old yellow crane truck",
+      "author": "AlfvanBeem",
+      "license": "CC0",
+      "source": "https://commons.wikimedia.org/wiki/File:Old_yellow_crane_truck.JPG"
+    },
+    {
+      "assets": ["/catalog/equipment/excavator-jcb-3cx-service.jpg"],
+      "title": "JCB 3CX backhoe loader",
+      "author": "Giorgos Kollias",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:JCB_3CX_backhoe_loader.JPG"
+    },
+    {
+      "assets": ["/catalog/equipment/excavator-jcb-360w-service.jpg"],
+      "title": "Stump removal on Pokrovska St, 2020.02.27 (1)",
+      "author": "VileGecko",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Stump_removal_on_Pokrovska_St,_2020.02.27_(1).jpg"
+    },
+    {
+      "assets": ["/catalog/equipment/excavator-jcb-220-service.jpg"],
+      "title": "JCB JS220 Excavator in Sofia 2012 PD 1",
+      "author": "Bin im Garten",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:JCB_JS220_Excavator_in_Sofia_2012_PD_1.jpg"
+    },
+    {
+      "assets": ["/catalog/equipment/bulldozer-john-deere-service.jpg"],
+      "title": "John Deere 850K LGP bulldozer",
+      "author": "WindBorneListener",
+      "license": "CC0",
+      "source": "https://commons.wikimedia.org/wiki/File:John_Deere_850K_LGP_bulldozer.jpg"
+    },
+    {
+      "assets": ["/catalog/equipment/kamaz-without-trailer-service.jpg"],
+      "title": "KamaZ dump truck",
+      "author": "Druschba 4",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:KamaZ_dump_truck.JPG"
+    },
+    {
+      "assets": ["/catalog/equipment/kamaz-with-trailer-service.jpg"],
+      "title": "Kamaz Semi-trailer",
+      "author": "henribergius",
+      "license": "CC BY-SA 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Kamaz_Semi-trailer.jpg"
+    },
+    {
+      "assets": ["/catalog/equipment/trawl-delivery-service.jpg"],
+      "title": "Broshuis low loader trailers 2014. Spielvogel",
+      "author": "Spielvogel",
+      "license": "CC0",
+      "source": "https://commons.wikimedia.org/wiki/File:Broshuis_low_loader_trailers_2014._Spielvogel.jpg"
+    }
+  ]
+}
