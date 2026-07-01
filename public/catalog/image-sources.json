@@ -100,7 +100,7 @@
       "source": "https://commons.wikimedia.org/wiki/File:JCB_3CX_backhoe_loader.JPG"
     },
     {
-      "assets": ["/catalog/equipment/excavator-jcb-360w-service.jpg"],
+      "assets": ["/catalog/equipment/excavator-jcb-160w-service.jpg"],
       "title": "Stump removal on Pokrovska St, 2020.02.27 (1)",
       "author": "VileGecko",
       "license": "CC BY-SA 4.0",
@@ -126,13 +126,6 @@
       "author": "Druschba 4",
       "license": "CC BY-SA 3.0",
       "source": "https://commons.wikimedia.org/wiki/File:KamaZ_dump_truck.JPG"
-    },
-    {
-      "assets": ["/catalog/equipment/kamaz-with-trailer-service.jpg"],
-      "title": "Kamaz Semi-trailer",
-      "author": "henribergius",
-      "license": "CC BY-SA 2.0",
-      "source": "https://commons.wikimedia.org/wiki/File:Kamaz_Semi-trailer.jpg"
     },
     {
       "assets": ["/catalog/equipment/trawl-delivery-service.jpg"],

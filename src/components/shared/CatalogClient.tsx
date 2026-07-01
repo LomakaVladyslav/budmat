@@ -56,7 +56,8 @@ export function CatalogClient({
       return (
         p.name[locale].toLowerCase().includes(q) ||
         p.description[locale].toLowerCase().includes(q) ||
-        p.applications[locale].some((a) => a.toLowerCase().includes(q))
+        p.applications[locale].some((a) => a.toLowerCase().includes(q)) ||
+        p.features[locale].some((feature) => feature.toLowerCase().includes(q))
       )
     })
   }, [products, searchQuery, categoryFilter, locale])
