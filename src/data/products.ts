@@ -494,7 +494,7 @@ export const products: Product[] = [
       uk: ['Під кільце 0,9 м', 'Великий отвір', 'Бетонна кришка', 'Продаж поштучно'],
       ru: ['Под кольцо 0,9 м', 'Большое отверстие', 'Бетонная крышка', 'Продажа поштучно'],
     },
-    image: '/catalog/products/concrete-cover-09mb.jpg',
+    image: '/catalog/products/concrete-cover-09mB.jpg',
     status: 'available',
   },
 ]
