@@ -40,7 +40,7 @@ export function HeroSection({ dict }: HeroSectionProps) {
       />
 
       {/* Content */}
-      <div className="relative z-10 mx-auto max-w-7xl px-4 pb-16 pt-24 sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 pb-28 pt-24 sm:px-6 lg:px-8">
         <div className="max-w-3xl">
           <div className="mb-6 animate-fade-up">
             <Badge variant="brand">{dict.hero.badge}</Badge>
@@ -94,23 +94,23 @@ export function HeroSection({ dict }: HeroSectionProps) {
             </a>
           </div>
         </div>
+      </div>
 
-        {/* Scroll indicator */}
-        <div
-          className="absolute bottom-8 left-1/2 flex -translate-x-1/2 animate-bounce flex-col items-center gap-2 text-ink-faint"
-          aria-hidden="true"
+      {/* Scroll indicator */}
+      <div
+        className="pointer-events-none absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 animate-bounce flex-col items-center gap-2 text-ink-faint sm:bottom-6"
+        aria-hidden="true"
+      >
+        <span className="text-xs font-medium uppercase tracking-widest">Гортати</span>
+        <svg
+          className="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={1.5}
         >
-          <span className="text-xs font-medium uppercase tracking-widest">Гортати</span>
-          <svg
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={1.5}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-          </svg>
-        </div>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+        </svg>
       </div>
     </section>
   )

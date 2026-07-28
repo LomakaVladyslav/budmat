@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import type { Locale } from '@/types/common.types'
 import type { Dictionary } from '@/lib/i18n/dictionaries/uk'
 import { navigation } from '@/data/navigation'
@@ -41,8 +42,15 @@ export function Header({ locale, dict }: HeaderProps) {
         <div className="md:h-18 flex h-16 items-center justify-between">
           {/* Logo */}
           <a href={`/${locale}`} className="flex shrink-0 items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500">
-              <span className="font-display text-sm font-bold text-white">Б</span>
+            <div className="flex h-9 w-11 items-center justify-center">
+              <Image
+                src="/favicon.png"
+                alt=""
+                width={44}
+                height={37}
+                className="h-full w-full object-contain"
+                priority
+              />
             </div>
             <span className="font-display text-lg font-bold leading-tight text-ink">
               БудМат
