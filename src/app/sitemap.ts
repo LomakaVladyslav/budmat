@@ -19,6 +19,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   }))
 
+  const returnPolicyPages = locales.map((locale) => ({
+    url: `${BASE_URL}/${locale}/return-policy`,
+    lastModified: now,
+    changeFrequency: 'monthly' as const,
+    priority: locale === 'uk' ? 0.7 : 0.65,
+    alternates: {
+      languages: Object.fromEntries(
+        locales.map((l) => [l === 'uk' ? 'uk-UA' : 'ru-UA', `${BASE_URL}/${l}/return-policy`])
+      ),
+    },
+  }))
+
   const productPages = getAllProducts().flatMap((product) =>
     locales.map((locale) => ({
       url: `${BASE_URL}/${locale}/products/${product.id}`,
@@ -53,5 +65,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }))
   )
 
-  return [...homePages, ...productPages, ...equipmentPages]
+  return [...homePages, ...returnPolicyPages, ...productPages, ...equipmentPages]
 }

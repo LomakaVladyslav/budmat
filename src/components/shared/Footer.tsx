@@ -1,5 +1,6 @@
 import type { Locale } from '@/types/common.types'
 import type { Dictionary } from '@/lib/i18n/dictionaries/uk'
+import Image from 'next/image'
 import { contacts } from '@/data/contacts'
 import { navigation } from '@/data/navigation'
 import { PhoneNumberButton } from '@/components/ui/PhoneButton'
@@ -11,6 +12,14 @@ interface FooterProps {
 
 export function Footer({ locale, dict }: FooterProps) {
   const getNavHref = (href: string) => (href.startsWith('#') ? `/${locale}${href}` : href)
+  const footerNavigation = [
+    ...navigation,
+    {
+      id: 'return-policy',
+      label: dict.footer.returnPolicy,
+      href: `/${locale}/return-policy`,
+    },
+  ]
 
   return (
     <footer className="border-t border-surface-border bg-surface-card">
@@ -19,8 +28,14 @@ export function Footer({ locale, dict }: FooterProps) {
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-2">
             <div className="mb-4 flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500">
-                <span className="font-display text-sm font-bold text-white">Б</span>
+              <div className="flex h-8 w-10 items-center justify-center">
+                <Image
+                  src="/favicon.png"
+                  alt=""
+                  width={40}
+                  height={34}
+                  className="h-full w-full object-contain"
+                />
               </div>
               <span className="font-display text-lg font-bold text-ink">БудМат Кагарлик</span>
             </div>
@@ -44,13 +59,13 @@ export function Footer({ locale, dict }: FooterProps) {
               {dict.footer.nav}
             </h3>
             <ul className="space-y-2.5">
-              {navigation.map((item) => (
+              {footerNavigation.map((item) => (
                 <li key={item.id}>
                   <a
                     href={getNavHref(item.href)}
                     className="text-sm text-ink-muted transition-colors hover:text-ink"
                   >
-                    {item.label[locale]}
+                    {typeof item.label === 'string' ? item.label : item.label[locale]}
                   </a>
                 </li>
               ))}
