@@ -40,7 +40,7 @@ export const products: Product[] = [
       uk: ['Фракція 5×20', 'Гранітний щебінь', 'Продаж за тонну'],
       ru: ['Фракция 5×20', 'Гранитный щебень', 'Продажа за тонну'],
     },
-    image: '/catalog/products/granite-crushed-stone-5-20.png',
+    image: '/catalog/products/granite-crushed-stone-5-20.jpg',
     status: 'available',
   },
   {
@@ -61,7 +61,7 @@ export const products: Product[] = [
       uk: ['Фракція 20×40', 'Гранітний щебінь', 'Продаж за тонну'],
       ru: ['Фракция 20×40', 'Гранитный щебень', 'Продажа за тонну'],
     },
-    image: '/catalog/products/granite-crushed-stone-20-40.png',
+    image: '/catalog/products/granite-crushed-stone-20-40.jpg',
     status: 'available',
   },
   {
@@ -187,7 +187,7 @@ export const products: Product[] = [
       uk: ['Розмір 200×200×400 мм', 'Бетонний блок', 'Продаж поштучно'],
       ru: ['Размер 200×200×400 мм', 'Бетонный блок', 'Продажа поштучно'],
     },
-    image: '/catalog/products/concrete-block-200-200-400.png',
+    image: '/catalog/products/concrete-block-200-200-400.jpg',
     status: 'available',
   },
   {

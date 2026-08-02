@@ -20,6 +20,7 @@ export function Header({ locale, dict }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const primaryPhone = contacts.phones[0]
+  const getNavHref = (href: string) => (href.startsWith('#') ? `/${locale}${href}` : href)
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 20)
@@ -65,7 +66,7 @@ export function Header({ locale, dict }: HeaderProps) {
             {navigation.map((item) => (
               <a
                 key={item.id}
-                href={item.href}
+                href={getNavHref(item.href)}
                 className="rounded-lg px-3.5 py-2 text-sm font-medium text-ink-muted transition-colors hover:bg-surface-card hover:text-ink"
               >
                 {item.label[locale]}
@@ -121,7 +122,7 @@ export function Header({ locale, dict }: HeaderProps) {
             {navigation.map((item) => (
               <a
                 key={item.id}
-                href={item.href}
+                href={getNavHref(item.href)}
                 onClick={closeMobile}
                 className="block rounded-xl px-4 py-3 text-base font-medium text-ink-muted transition-colors hover:bg-surface-card hover:text-ink"
               >

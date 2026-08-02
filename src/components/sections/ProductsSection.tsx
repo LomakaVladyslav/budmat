@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import type { Locale } from '@/types/common.types'
 import type { Dictionary } from '@/lib/i18n/dictionaries/uk'
 import type { Product } from '@/types/product.types'
@@ -112,11 +113,11 @@ export function ProductsSection({
         )}
       </div>
 
-      {/* Product Modal */}
       <Modal
         isOpen={!!selectedProduct}
         onClose={() => setSelectedProduct(null)}
         title={selectedProduct?.name[locale] ?? ''}
+        closeLabel={t.modalClose}
       >
         {selectedProduct && (
           <ProductModalContent product={selectedProduct} locale={locale} dict={dict} />
@@ -137,73 +138,80 @@ interface ProductCardProps {
 
 function ProductCard({ product, locale, dict, onDetails }: ProductCardProps) {
   const t = dict.products
+  const productHref = `/${locale}/products/${product.id}`
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-2xl border border-surface-border bg-surface-card transition-all duration-300 hover:border-brand-500/30 hover:shadow-xl hover:shadow-brand-500/5">
-      {/* Image */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-surface-muted">
-        <Image
-          src={product.image}
-          alt={product.name[locale]}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-        />
-        {product.status === 'order' && (
-          <div className="absolute right-3 top-3">
-            <Badge variant="muted">{t.statusOrder}</Badge>
-          </div>
-        )}
-      </div>
-
-      {/* Content */}
-      <div className="flex flex-1 flex-col p-4 md:p-5">
-        <h3 className="mb-1 line-clamp-2 font-display text-base font-bold leading-snug text-ink">
-          {product.name[locale]}
-        </h3>
-        <p className="mb-4 text-sm text-ink-muted">
-          {t.perUnit} {product.unit[locale]}
-        </p>
-
-        {/* Price */}
-        <div className="mb-4 mt-auto">
-          <span className="font-display text-2xl font-bold text-brand-400">
-            {formatPrice(product.price)} ₴
-          </span>
-          {product.priceNote && (
-            <span className="ml-1.5 text-xs text-ink-muted">/ {product.priceNote[locale]}</span>
+      <Link
+        href={productHref}
+        className="flex flex-1 flex-col focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
+        aria-label={`${t.detailsButton}: ${product.name[locale]}`}
+      >
+        {/* Image */}
+        <div className="relative aspect-[4/3] overflow-hidden bg-surface-muted">
+          <Image
+            src={product.image}
+            alt={product.name[locale]}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          />
+          {product.status === 'order' && (
+            <div className="absolute right-3 top-3">
+              <Badge variant="muted">{t.statusOrder}</Badge>
+            </div>
           )}
         </div>
 
-        {/* Actions */}
-        <div className="flex gap-2">
-          <PhoneButton label={t.callButton} dict={dict} size="sm" fullWidth />
-          <button
-            onClick={onDetails}
-            className="shrink-0 rounded-xl border border-surface-border bg-surface-muted px-3 py-1.5 text-sm font-semibold text-ink-muted transition-colors hover:border-surface-muted hover:text-ink"
-            aria-label={`${t.detailsButton}: ${product.name[locale]}`}
-          >
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
-              />
-            </svg>
-          </button>
+        {/* Content */}
+        <div className="flex flex-1 flex-col p-4 pb-3 md:p-5 md:pb-4">
+          <h3 className="mb-1 line-clamp-2 font-display text-base font-bold leading-snug text-ink transition-colors group-hover:text-brand-400">
+            {product.name[locale]}
+          </h3>
+          <p className="mb-4 text-sm text-ink-muted">
+            {t.perUnit} {product.unit[locale]}
+          </p>
+
+          {/* Price */}
+          <div className="mb-1 mt-auto">
+            <span className="font-display text-2xl font-bold text-brand-400">
+              {formatPrice(product.price)} ₴
+            </span>
+            {product.priceNote && (
+              <span className="ml-1.5 text-xs text-ink-muted">/ {product.priceNote[locale]}</span>
+            )}
+          </div>
         </div>
+      </Link>
+
+      {/* Actions */}
+      <div className="flex gap-2 px-4 pb-4 md:px-5 md:pb-5">
+        <PhoneButton label={t.callButton} dict={dict} size="sm" fullWidth />
+        <button
+          type="button"
+          onClick={onDetails}
+          className="inline-flex shrink-0 items-center justify-center rounded-xl border border-surface-border bg-surface-muted px-3 py-1.5 text-sm font-semibold text-ink-muted transition-colors hover:border-surface-muted hover:text-ink"
+          aria-label={`${t.detailsButton}: ${product.name[locale]}`}
+        >
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+            />
+          </svg>
+        </button>
       </div>
     </article>
   )
 }
-
-// ─── Product Modal Content ────────────────────────────────────────────────────
 
 function ProductModalContent({
   product,
@@ -218,7 +226,6 @@ function ProductModalContent({
 
   return (
     <div className="space-y-6">
-      {/* Image */}
       <div className="relative aspect-video overflow-hidden rounded-xl bg-surface-muted">
         <Image
           src={product.image}
@@ -229,7 +236,6 @@ function ProductModalContent({
         />
       </div>
 
-      {/* Price */}
       <div className="flex items-baseline gap-2">
         <span className="font-display text-3xl font-bold text-brand-400">
           {formatPrice(product.price)} ₴
@@ -237,18 +243,16 @@ function ProductModalContent({
         <span className="text-sm text-ink-muted">/ {product.unit[locale]}</span>
       </div>
 
-      {/* Description */}
       <p className="leading-relaxed text-ink-muted">{product.description[locale]}</p>
 
-      {/* Applications */}
       {product.applications[locale].length > 0 && (
         <div>
           <h4 className="mb-3 font-display text-sm font-bold uppercase tracking-wider text-ink">
             {t.modalApplications}
           </h4>
           <ul className="space-y-2">
-            {product.applications[locale].map((item, i) => (
-              <li key={i} className="flex items-start gap-2.5 text-sm text-ink-muted">
+            {product.applications[locale].map((item) => (
+              <li key={item} className="flex items-start gap-2.5 text-sm text-ink-muted">
                 <span className="mt-0.5 shrink-0 text-brand-500" aria-hidden="true">
                   ✓
                 </span>
@@ -259,23 +263,21 @@ function ProductModalContent({
         </div>
       )}
 
-      {/* Features */}
       {product.features[locale].length > 0 && (
         <div>
           <h4 className="mb-3 font-display text-sm font-bold uppercase tracking-wider text-ink">
             {t.modalFeatures}
           </h4>
           <div className="flex flex-wrap gap-2">
-            {product.features[locale].map((feat, i) => (
-              <Badge key={i} variant="muted">
-                {feat}
+            {product.features[locale].map((feature) => (
+              <Badge key={feature} variant="muted">
+                {feature}
               </Badge>
             ))}
           </div>
         </div>
       )}
 
-      {/* CTA */}
       <PhoneButton label={t.modalCall} dict={dict} size="lg" fullWidth />
     </div>
   )

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import type { Locale } from '@/types/common.types'
 import type { Dictionary } from '@/lib/i18n/dictionaries/uk'
 import type { Equipment } from '@/types/equipment.types'
@@ -86,68 +87,76 @@ interface EquipmentCardProps {
 
 function EquipmentCard({ item, locale, dict, onDetails }: EquipmentCardProps) {
   const t = dict.equipment
+  const equipmentHref = `/${locale}/equipment/${item.id}`
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-2xl border border-surface-border bg-surface-card transition-all duration-300 hover:border-brand-500/30 hover:shadow-xl hover:shadow-brand-500/5">
-      {/* Image */}
-      <div className="relative aspect-video overflow-hidden bg-surface-muted">
-        <Image
-          src={item.image}
-          alt={item.name[locale]}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-        />
-        {/* //  <div className="absolute inset-0 bg-gradient-to-t from-surface-card/60 to-transparent" /> */}
-        {item.minimumHours && (
-          <Badge variant="muted" className="absolute bottom-3 left-3">
-            {t.minRental} {item.minimumHours} {t.modalHours}
-          </Badge>
-        )}
-      </div>
-
-      {/* Content */}
-      <div className="flex flex-1 flex-col p-5">
-        <h3 className="mb-2 font-display text-lg font-bold leading-snug text-ink">
-          {item.name[locale]}
-        </h3>
-        <p className="mb-4 line-clamp-2 text-sm leading-relaxed text-ink-muted">
-          {item.description[locale]}
-        </p>
-
-        {/* Price */}
-        <div className="mb-4 mt-auto">
-          <span className="font-display text-2xl font-bold text-brand-400">
-            {item.price === null ? item.priceLabel?.[locale] : `${formatPrice(item.price)} ₴`}
-          </span>
-          {item.price !== null && item.priceNote && (
-            <span className="ml-1.5 text-sm text-ink-muted">/ {item.priceNote[locale]}</span>
+      <Link
+        href={equipmentHref}
+        className="flex flex-1 flex-col focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
+        aria-label={`${t.detailsButton}: ${item.name[locale]}`}
+      >
+        {/* Image */}
+        <div className="relative aspect-video overflow-hidden bg-surface-muted">
+          <Image
+            src={item.image}
+            alt={item.name[locale]}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          />
+          {item.minimumHours && (
+            <Badge variant="muted" className="absolute bottom-3 left-3">
+              {t.minRental} {item.minimumHours} {t.modalHours}
+            </Badge>
           )}
         </div>
 
-        {/* Actions */}
-        <div className="flex gap-2">
-          <PhoneButton label={t.callButton} dict={dict} size="sm" fullWidth />
-          <button
-            onClick={onDetails}
-            className="shrink-0 rounded-xl border border-surface-border bg-surface-muted px-3 py-1.5 text-sm font-semibold text-ink-muted transition-colors hover:border-surface-muted hover:text-ink"
-            aria-label={`${t.detailsButton}: ${item.name[locale]}`}
-          >
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
-              />
-            </svg>
-          </button>
+        {/* Content */}
+        <div className="flex flex-1 flex-col p-5 pb-3">
+          <h3 className="mb-2 font-display text-lg font-bold leading-snug text-ink transition-colors group-hover:text-brand-400">
+            {item.name[locale]}
+          </h3>
+          <p className="mb-4 line-clamp-2 text-sm leading-relaxed text-ink-muted">
+            {item.description[locale]}
+          </p>
+
+          {/* Price */}
+          <div className="mt-auto">
+            <span className="font-display text-2xl font-bold text-brand-400">
+              {item.price === null ? item.priceLabel?.[locale] : `${formatPrice(item.price)} ₴`}
+            </span>
+            {item.price !== null && item.priceNote && (
+              <span className="ml-1.5 text-sm text-ink-muted">/ {item.priceNote[locale]}</span>
+            )}
+          </div>
         </div>
+      </Link>
+
+      {/* Actions */}
+      <div className="flex gap-2 px-5 pb-5">
+        <PhoneButton label={t.callButton} dict={dict} size="sm" fullWidth />
+        <button
+          type="button"
+          onClick={onDetails}
+          className="shrink-0 rounded-xl border border-surface-border bg-surface-muted px-3 py-1.5 text-sm font-semibold text-ink-muted transition-colors hover:border-surface-muted hover:text-ink"
+          aria-label={`${t.detailsButton}: ${item.name[locale]}`}
+        >
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+            />
+          </svg>
+        </button>
       </div>
     </article>
   )

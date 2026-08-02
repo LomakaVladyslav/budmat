@@ -10,6 +10,8 @@ interface FooterProps {
 }
 
 export function Footer({ locale, dict }: FooterProps) {
+  const getNavHref = (href: string) => (href.startsWith('#') ? `/${locale}${href}` : href)
+
   return (
     <footer className="border-t border-surface-border bg-surface-card">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
@@ -45,7 +47,7 @@ export function Footer({ locale, dict }: FooterProps) {
               {navigation.map((item) => (
                 <li key={item.id}>
                   <a
-                    href={item.href}
+                    href={getNavHref(item.href)}
                     className="text-sm text-ink-muted transition-colors hover:text-ink"
                   >
                     {item.label[locale]}

@@ -63,11 +63,13 @@ export default async function LocalePage({ params }: PageProps) {
       itemListElement: [
         ...products.map((product) => ({
           '@type': 'Offer',
+          url: `${baseUrl}/${locale}/products/${product.id}`,
           itemOffered: {
             '@type': 'Product',
             name: product.name[locale],
             description: product.description[locale],
             image: `${baseUrl}${product.image}`,
+            url: `${baseUrl}/${locale}/products/${product.id}`,
           },
           price: product.price,
           priceCurrency: 'UAH',
@@ -78,11 +80,13 @@ export default async function LocalePage({ params }: PageProps) {
         })),
         ...equipment.map((item) => ({
           '@type': 'Offer',
+          url: `${baseUrl}/${locale}/equipment/${item.id}`,
           itemOffered: {
             '@type': 'Service',
             name: item.name[locale],
             description: item.description[locale],
             image: `${baseUrl}${item.image}`,
+            url: `${baseUrl}/${locale}/equipment/${item.id}`,
           },
           price: item.price ?? undefined,
           priceCurrency: item.price ? 'UAH' : undefined,
