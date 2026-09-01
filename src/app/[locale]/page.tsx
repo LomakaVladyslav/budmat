@@ -61,36 +61,56 @@ export default async function LocalePage({ params }: PageProps) {
           ? 'Будівельні матеріали та спецтехніка'
           : 'Строительные материалы и спецтехника',
       itemListElement: [
-        ...products.map((product) => ({
-          '@type': 'Offer',
-          url: `${baseUrl}/${locale}/products/${product.id}`,
-          itemOffered: {
-            '@type': 'Product',
-            name: product.name[locale],
-            description: product.description[locale],
-            image: `${baseUrl}${product.image}`,
-            url: `${baseUrl}/${locale}/products/${product.id}`,
-          },
-          price: product.price,
-          priceCurrency: 'UAH',
-          availability:
+        ...products.map((product) => {
+          const productUrl = `${baseUrl}/${locale}/products/${product.id}`
+          const availability =
             product.status === 'available'
               ? 'https://schema.org/InStock'
-              : 'https://schema.org/PreOrder',
-        })),
-        ...equipment.map((item) => ({
-          '@type': 'Offer',
-          url: `${baseUrl}/${locale}/equipment/${item.id}`,
-          itemOffered: {
-            '@type': 'Service',
-            name: item.name[locale],
-            description: item.description[locale],
-            image: `${baseUrl}${item.image}`,
-            url: `${baseUrl}/${locale}/equipment/${item.id}`,
-          },
-          price: item.price ?? undefined,
-          priceCurrency: item.price ? 'UAH' : undefined,
-        })),
+              : 'https://schema.org/PreOrder'
+          const offer = {
+            '@type': 'Offer',
+            url: productUrl,
+            priceCurrency: 'UAH',
+            price: product.price,
+            availability,
+            itemCondition: 'https://schema.org/NewCondition',
+          }
+
+          return {
+            '@type': 'Offer',
+            url: productUrl,
+            itemOffered: {
+              '@type': 'Product',
+              name: product.name[locale],
+              description: product.description[locale],
+              image: `${baseUrl}${product.image}`,
+              sku: product.id,
+              category: dict.products.categories[product.category],
+              url: productUrl,
+              offers: offer,
+            },
+            price: product.price,
+            priceCurrency: 'UAH',
+            availability,
+          }
+        }),
+        ...equipment.map((item) => {
+          const equipmentUrl = `${baseUrl}/${locale}/equipment/${item.id}`
+
+          return {
+            '@type': 'Offer',
+            url: equipmentUrl,
+            itemOffered: {
+              '@type': 'Service',
+              name: item.name[locale],
+              description: item.description[locale],
+              image: `${baseUrl}${item.image}`,
+              url: equipmentUrl,
+            },
+            price: item.price ?? undefined,
+            priceCurrency: item.price !== null ? 'UAH' : undefined,
+          }
+        }),
       ],
     },
   }

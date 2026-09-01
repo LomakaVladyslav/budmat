@@ -14,6 +14,11 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
+  if (pathname === '/') {
+    const newUrl = new URL(`/${defaultLocale}`, request.url)
+    return NextResponse.redirect(newUrl, 308)
+  }
+
   // Check if the path already has a valid locale prefix
   const pathnameLocale = pathname.split('/')[1]
   if (isValidLocale(pathnameLocale)) {

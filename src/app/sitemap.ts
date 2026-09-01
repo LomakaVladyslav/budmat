@@ -14,7 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: locale === 'uk' ? 1 : 0.9,
     alternates: {
       languages: Object.fromEntries(
-        locales.map((l) => [l === 'uk' ? 'uk-UA' : 'ru-UA', `${BASE_URL}/${l}`])
+        locales.map((l) => [l, `${BASE_URL}/${l}`]).concat([['x-default', `${BASE_URL}/uk`]])
       ),
     },
   }))
@@ -26,7 +26,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: locale === 'uk' ? 0.7 : 0.65,
     alternates: {
       languages: Object.fromEntries(
-        locales.map((l) => [l === 'uk' ? 'uk-UA' : 'ru-UA', `${BASE_URL}/${l}/return-policy`])
+        locales
+          .map((l) => [l, `${BASE_URL}/${l}/return-policy`])
+          .concat([['x-default', `${BASE_URL}/uk/return-policy`]])
       ),
     },
   }))
@@ -39,10 +41,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: locale === 'uk' ? 0.85 : 0.8,
       alternates: {
         languages: Object.fromEntries(
-          locales.map((l) => [
-            l === 'uk' ? 'uk-UA' : 'ru-UA',
-            `${BASE_URL}/${l}/products/${product.id}`,
-          ])
+          locales
+            .map((l) => [l, `${BASE_URL}/${l}/products/${product.id}`])
+            .concat([['x-default', `${BASE_URL}/uk/products/${product.id}`]])
         ),
       },
     }))
@@ -56,10 +57,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: locale === 'uk' ? 0.85 : 0.8,
       alternates: {
         languages: Object.fromEntries(
-          locales.map((l) => [
-            l === 'uk' ? 'uk-UA' : 'ru-UA',
-            `${BASE_URL}/${l}/equipment/${item.id}`,
-          ])
+          locales
+            .map((l) => [l, `${BASE_URL}/${l}/equipment/${item.id}`])
+            .concat([['x-default', `${BASE_URL}/uk/equipment/${item.id}`]])
         ),
       },
     }))

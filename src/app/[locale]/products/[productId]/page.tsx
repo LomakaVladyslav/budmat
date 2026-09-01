@@ -118,8 +118,9 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     alternates: {
       canonical: productPath,
       languages: {
-        'uk-UA': `/uk/products/${product.id}`,
-        'ru-UA': `/ru/products/${product.id}`,
+        uk: `/uk/products/${product.id}`,
+        ru: `/ru/products/${product.id}`,
+        'x-default': `/uk/products/${product.id}`,
       },
     },
     robots: {

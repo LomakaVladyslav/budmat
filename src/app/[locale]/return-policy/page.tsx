@@ -33,8 +33,9 @@ export async function generateMetadata({ params }: ReturnPolicyPageProps): Promi
     alternates: {
       canonical: `/${locale}/return-policy`,
       languages: {
-        'uk-UA': '/uk/return-policy',
-        'ru-UA': '/ru/return-policy',
+        uk: '/uk/return-policy',
+        ru: '/ru/return-policy',
+        'x-default': '/uk/return-policy',
       },
     },
     openGraph: {

@@ -46,8 +46,9 @@ export async function generateMetadata({ params }: LocaleLayoutProps): Promise<M
     alternates: {
       canonical: `/${locale}`,
       languages: {
-        'uk-UA': '/uk',
-        'ru-UA': '/ru',
+        uk: '/uk',
+        ru: '/ru',
+        'x-default': '/uk',
       },
     },
     robots: {

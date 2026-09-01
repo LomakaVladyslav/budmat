@@ -125,8 +125,9 @@ export async function generateMetadata({ params }: EquipmentPageProps): Promise<
     alternates: {
       canonical: equipmentPath,
       languages: {
-        'uk-UA': `/uk/equipment/${item.id}`,
-        'ru-UA': `/ru/equipment/${item.id}`,
+        uk: `/uk/equipment/${item.id}`,
+        ru: `/ru/equipment/${item.id}`,
+        'x-default': `/uk/equipment/${item.id}`,
       },
     },
     robots: {
