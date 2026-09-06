@@ -6,6 +6,7 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
+          content: 'rgb(var(--color-brand-content) / <alpha-value>)',
           50: '#fff8ed',
           100: '#ffefd4',
           200: '#ffdba8',

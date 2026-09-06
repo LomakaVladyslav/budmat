@@ -74,14 +74,22 @@ export function ProductsSection({
         <SectionTitle title={t.sectionTitle} subtitle={t.sectionSubtitle} />
 
         {/* Filters */}
-        <div className="mb-8 flex flex-wrap gap-2">
+        <div
+          role="group"
+          aria-label={locale === 'uk' ? 'Фільтр матеріалів' : 'Фильтр материалов'}
+          className="mb-8 flex flex-wrap gap-2"
+        >
           {productFilters.map((f) => (
             <button
+              type="button"
               key={f.id}
               onClick={() => onFilterChange(f.id)}
+              aria-pressed={
+                activeFilter === f.id || (f.id === 'all-products' && activeFilter === 'all')
+              }
               className={`rounded-xl border px-4 py-2 text-sm font-semibold transition-all duration-200 ${
                 activeFilter === f.id || (f.id === 'all-products' && activeFilter === 'all')
-                  ? 'border-brand-500 bg-brand-500 text-white shadow-lg shadow-brand-500/20'
+                  ? 'border-brand-500 bg-brand-500 text-brand-950 shadow-lg shadow-brand-500/20'
                   : 'border-surface-border bg-surface-card text-ink-muted hover:border-surface-muted hover:text-ink'
               }`}
             >
@@ -89,6 +97,9 @@ export function ProductsSection({
             </button>
           ))}
         </div>
+        <p role="status" className="sr-only">
+          {t.sectionTitle}: {filtered.length}
+        </p>
 
         {/* Cards grid */}
         {filtered.length > 0 ? (
@@ -144,6 +155,7 @@ function ProductCard({ product, locale, dict, onDetails }: ProductCardProps) {
     <article className="group flex flex-col overflow-hidden rounded-2xl border border-surface-border bg-surface-card transition-all duration-300 hover:border-brand-500/30 hover:shadow-xl hover:shadow-brand-500/5">
       <Link
         href={productHref}
+        prefetch={false}
         className="flex flex-1 flex-col focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
         aria-label={`${t.detailsButton}: ${product.name[locale]}`}
       >
@@ -154,7 +166,7 @@ function ProductCard({ product, locale, dict, onDetails }: ProductCardProps) {
             alt={product.name[locale]}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            sizes="(max-width: 639px) calc(100vw - 32px), (max-width: 767px) calc((100vw - 64px) / 2), (max-width: 1023px) calc((100vw - 72px) / 2), (max-width: 1279px) calc((100vw - 112px) / 3), 286px"
           />
           {product.status === 'order' && (
             <div className="absolute right-3 top-3">
@@ -165,7 +177,7 @@ function ProductCard({ product, locale, dict, onDetails }: ProductCardProps) {
 
         {/* Content */}
         <div className="flex flex-1 flex-col p-4 pb-3 md:p-5 md:pb-4">
-          <h3 className="mb-1 line-clamp-2 font-display text-base font-bold leading-snug text-ink transition-colors group-hover:text-brand-400">
+          <h3 className="mb-1 line-clamp-2 font-display text-base font-bold leading-snug text-ink transition-colors group-hover:text-brand-content">
             {product.name[locale]}
           </h3>
           <p className="mb-4 text-sm text-ink-muted">
@@ -174,7 +186,7 @@ function ProductCard({ product, locale, dict, onDetails }: ProductCardProps) {
 
           {/* Price */}
           <div className="mb-1 mt-auto">
-            <span className="font-display text-2xl font-bold text-brand-400">
+            <span className="font-display text-2xl font-bold text-brand-content">
               {formatPrice(product.price)} ₴
             </span>
             {product.priceNote && (
@@ -192,6 +204,7 @@ function ProductCard({ product, locale, dict, onDetails }: ProductCardProps) {
           onClick={onDetails}
           className="inline-flex shrink-0 items-center justify-center rounded-xl border border-surface-border bg-surface-muted px-3 py-1.5 text-sm font-semibold text-ink-muted transition-colors hover:border-surface-muted hover:text-ink"
           aria-label={`${t.detailsButton}: ${product.name[locale]}`}
+          aria-haspopup="dialog"
         >
           <svg
             className="h-4 w-4"
@@ -237,7 +250,7 @@ function ProductModalContent({
       </div>
 
       <div className="flex items-baseline gap-2">
-        <span className="font-display text-3xl font-bold text-brand-400">
+        <span className="font-display text-3xl font-bold text-brand-content">
           {formatPrice(product.price)} ₴
         </span>
         <span className="text-sm text-ink-muted">/ {product.unit[locale]}</span>
@@ -253,7 +266,7 @@ function ProductModalContent({
           <ul className="space-y-2">
             {product.applications[locale].map((item) => (
               <li key={item} className="flex items-start gap-2.5 text-sm text-ink-muted">
-                <span className="mt-0.5 shrink-0 text-brand-500" aria-hidden="true">
+                <span className="mt-0.5 shrink-0 text-brand-content" aria-hidden="true">
                   ✓
                 </span>
                 {item}

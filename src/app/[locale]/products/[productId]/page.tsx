@@ -8,6 +8,7 @@ import { contacts } from '@/data/contacts'
 import { locales, isValidLocale, defaultLocale } from '@/lib/i18n/config'
 import { getDictionary } from '@/lib/i18n/getDictionary'
 import { getAllProducts } from '@/lib/repositories/products.repository'
+import { absoluteUrl, BUSINESS_ID, getLanguageAlternates, serializeJsonLd } from '@/lib/seo'
 import { Header } from '@/components/shared/Header'
 import { Footer } from '@/components/shared/Footer'
 import { ContactsSection } from '@/components/sections/ContactsSection'
@@ -15,15 +16,15 @@ import { PhoneButton } from '@/components/ui/PhoneButton'
 import { Badge } from '@/components/ui/Badge'
 import { formatPrice } from '@/utils/formatPrice'
 
-const BASE_URL = 'https://budmat-kaharlyk.com.ua'
-
 interface ProductPageProps {
   params: Promise<{ locale: string; productId: string }>
 }
 
 const pageText = {
   uk: {
-    backToCatalog: 'До каталогу',
+    homeBreadcrumb: 'Головна',
+    breadcrumbs: 'Навігаційний шлях',
+    location: 'в Кагарлику',
     category: 'Категорія',
     price: 'Ціна',
     inStock: 'В наявності',
@@ -33,10 +34,16 @@ const pageText = {
       'Наявність, доставку по Кагарлику та Київській області, обсяг і деталі замовлення уточнюйте телефоном.',
     relatedTitle: 'Схожі товари',
     relatedSubtitle: 'Інші позиції з цієї категорії',
-    homeBreadcrumb: 'Будівельні матеріали',
+    orderDetailsTitle: 'Що підготувати для замовлення',
+    orderProduct: 'Назву товару та потрібну кількість',
+    orderAddress: 'Адресу та бажану дату доставки',
+    orderAccess: 'Інформацію про під’їзд і розвантаження',
+    viewCategory: 'Усі товари категорії',
   },
   ru: {
-    backToCatalog: 'К каталогу',
+    homeBreadcrumb: 'Главная',
+    breadcrumbs: 'Навигационная цепочка',
+    location: 'в Кагарлыке',
     category: 'Категория',
     price: 'Цена',
     inStock: 'В наличии',
@@ -46,7 +53,11 @@ const pageText = {
       'Наличие, доставку по Кагарлыку и Киевской области, объем и детали заказа уточняйте по телефону.',
     relatedTitle: 'Похожие товары',
     relatedSubtitle: 'Другие позиции из этой категории',
-    homeBreadcrumb: 'Строительные материалы',
+    orderDetailsTitle: 'Что подготовить для заказа',
+    orderProduct: 'Название товара и нужное количество',
+    orderAddress: 'Адрес и желаемую дату доставки',
+    orderAccess: 'Информацию о подъезде и разгрузке',
+    viewCategory: 'Все товары категории',
   },
 } satisfies Record<Locale, Record<string, string>>
 
@@ -73,12 +84,15 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const dict = await getDictionary(locale)
   const title =
     locale === 'uk'
-      ? `${product.name[locale]} в Кагарлику - ціна ${formatPrice(product.price)} грн | ${dict.meta.siteName}`
-      : `${product.name[locale]} в Кагарлыке - цена ${formatPrice(product.price)} грн | ${dict.meta.siteName}`
+      ? `${product.name[locale]} — ціна в Кагарлику | БудМат`
+      : `${product.name[locale]} — цена в Кагарлыке | БудМат`
+  const summary =
+    product.description[locale].match(/^.*?[.!?](?:\s|$)/)?.[0].trim() ??
+    product.description[locale]
   const description =
     locale === 'uk'
-      ? `${product.description[locale]} Ціна: ${formatPrice(product.price)} грн за ${product.unit[locale]}.`
-      : `${product.description[locale]} Цена: ${formatPrice(product.price)} грн за ${product.unit[locale]}.`
+      ? `${summary} Ціна в Кагарлику: ${formatPrice(product.price)} грн за ${product.unit[locale]}.`
+      : `${summary} Цена в Кагарлыке: ${formatPrice(product.price)} грн за ${product.unit[locale]}.`
   const productPath = `/${locale}/products/${product.id}`
   const locationKeywords =
     locale === 'uk'
@@ -98,13 +112,14 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     openGraph: {
       title,
       description,
-      url: productPath,
+      url: absoluteUrl(productPath),
       siteName: dict.meta.siteName,
       locale: locale === 'uk' ? 'uk_UA' : 'ru_UA',
+      alternateLocale: locale === 'uk' ? 'ru_UA' : 'uk_UA',
       type: 'website',
       images: [
         {
-          url: product.image,
+          url: absoluteUrl(product.image),
           alt: product.name[locale],
         },
       ],
@@ -113,15 +128,11 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
       card: 'summary_large_image',
       title,
       description,
-      images: [product.image],
+      images: [absoluteUrl(product.image)],
     },
     alternates: {
-      canonical: productPath,
-      languages: {
-        uk: `/uk/products/${product.id}`,
-        ru: `/ru/products/${product.id}`,
-        'x-default': `/uk/products/${product.id}`,
-      },
+      canonical: absoluteUrl(productPath),
+      languages: getLanguageAlternates(`/products/${product.id}`),
     },
     robots: {
       index: true,
@@ -152,7 +163,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
     .filter((item) => item.category === product.category && item.id !== product.id)
     .slice(0, 4)
   const categoryLabel = t.categories[product.category] ?? product.category
-  const productUrl = `${BASE_URL}/${locale}/products/${product.id}`
+  const categoryPath = `/${locale}/categories/${product.category}`
+  const productUrl = absoluteUrl(`/${locale}/products/${product.id}`)
   const productJsonLd = buildProductJsonLd(
     product,
     locale,
@@ -166,7 +178,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(productJsonLd).replace(/</g, '\\u003c'),
+          __html: serializeJsonLd(productJsonLd),
         }}
       />
 
@@ -175,17 +187,34 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <main id="main-content" className="pt-24">
         <section className="py-8 md:py-14">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm" aria-label="Breadcrumb">
-              <Link
-                href={`/${locale}#products`}
-                className="font-semibold text-brand-400 transition-colors hover:text-brand-300"
-              >
-                {text.backToCatalog}
-              </Link>
-              <span className="text-ink-faint" aria-hidden="true">
-                /
-              </span>
-              <span className="text-ink-muted">{product.name[locale]}</span>
+            <nav className="mb-6 text-sm" aria-label={text.breadcrumbs}>
+              <ol className="flex flex-wrap items-center gap-2">
+                <li>
+                  <Link
+                    href={`/${locale}`}
+                    className="font-semibold text-brand-content hover:text-ink"
+                  >
+                    {text.homeBreadcrumb}
+                  </Link>
+                </li>
+                <li aria-hidden="true" className="text-ink-faint">
+                  /
+                </li>
+                <li>
+                  <Link
+                    href={categoryPath}
+                    className="font-semibold text-brand-content hover:text-ink"
+                  >
+                    {categoryLabel}
+                  </Link>
+                </li>
+                <li aria-hidden="true" className="text-ink-faint">
+                  /
+                </li>
+                <li aria-current="page" className="text-ink-muted">
+                  {product.name[locale]}
+                </li>
+              </ol>
             </nav>
 
             <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)] lg:items-start">
@@ -209,7 +238,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 </div>
 
                 <h1 className="font-display text-3xl font-bold leading-tight text-ink sm:text-4xl lg:text-5xl">
-                  {product.name[locale]}
+                  {product.name[locale]} {text.location}
                 </h1>
 
                 <p className="mt-4 text-base leading-relaxed text-ink-muted md:text-lg">
@@ -220,7 +249,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   <div className="rounded-2xl border border-surface-border bg-surface-card p-4">
                     <dt className="text-sm font-semibold text-ink-muted">{text.price}</dt>
                     <dd className="mt-1">
-                      <span className="font-display text-3xl font-bold text-brand-400">
+                      <span className="font-display text-3xl font-bold text-brand-content">
                         {formatPrice(product.price)} ₴
                       </span>
                       <span className="ml-2 text-sm text-ink-muted">
@@ -230,7 +259,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   </div>
                   <div className="rounded-2xl border border-surface-border bg-surface-card p-4">
                     <dt className="text-sm font-semibold text-ink-muted">{text.category}</dt>
-                    <dd className="mt-2 text-lg font-semibold text-ink">{categoryLabel}</dd>
+                    <dd className="mt-2 text-lg font-semibold text-ink">
+                      <Link
+                        href={categoryPath}
+                        className="underline decoration-brand-400/40 underline-offset-4 hover:text-brand-content"
+                      >
+                        {categoryLabel}
+                      </Link>
+                    </dd>
                   </div>
                 </dl>
 
@@ -252,7 +288,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                     key={item}
                     className="flex items-start gap-3 text-sm leading-relaxed text-ink-muted"
                   >
-                    <span className="mt-0.5 shrink-0 text-brand-500" aria-hidden="true">
+                    <span className="mt-0.5 shrink-0 text-brand-content" aria-hidden="true">
                       ✓
                     </span>
                     {item}
@@ -278,6 +314,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <p className="mt-3 text-sm leading-relaxed text-ink-muted">
                 {contacts.address[locale]}
               </p>
+              <h3 className="mt-6 font-semibold text-ink">{text.orderDetailsTitle}</h3>
+              <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-ink-muted">
+                <li>{text.orderProduct}</li>
+                <li>{text.orderAddress}</li>
+                <li>{text.orderAccess}</li>
+              </ul>
             </div>
           </div>
         </section>
@@ -307,16 +349,25 @@ export default async function ProductPage({ params }: ProductPageProps) {
                       />
                     </div>
                     <div className="p-4">
-                      <h3 className="line-clamp-2 font-display text-base font-bold leading-snug text-ink transition-colors group-hover:text-brand-400">
+                      <h3 className="line-clamp-2 font-display text-base font-bold leading-snug text-ink transition-colors group-hover:text-brand-content">
                         {item.name[locale]}
                       </h3>
-                      <p className="mt-3 font-display text-xl font-bold text-brand-400">
+                      <p className="mt-3 font-display text-xl font-bold text-brand-content">
                         {formatPrice(item.price)} ₴
+                        <span className="ml-1 font-sans text-sm font-normal text-ink-muted">
+                          {t.perUnit} {item.unit[locale]}
+                        </span>
                       </p>
                     </div>
                   </Link>
                 ))}
               </div>
+              <Link
+                href={categoryPath}
+                className="mt-6 inline-flex font-semibold text-brand-content underline underline-offset-4 hover:text-ink"
+              >
+                {text.viewCategory}: {categoryLabel}
+              </Link>
             </div>
           </section>
         )}
@@ -344,24 +395,45 @@ function buildProductJsonLd(
     '@context': 'https://schema.org',
     '@graph': [
       {
+        '@type': 'ItemPage',
+        '@id': `${productUrl}#webpage`,
+        url: productUrl,
+        name: `${product.name[locale]} ${pageText[locale].location}`,
+        inLanguage: locale,
+        mainEntity: { '@id': `${productUrl}#product` },
+        breadcrumb: { '@id': `${productUrl}#breadcrumbs` },
+      },
+      {
         '@type': 'Product',
+        '@id': `${productUrl}#product`,
+        url: productUrl,
+        mainEntityOfPage: { '@id': `${productUrl}#webpage` },
         name: product.name[locale],
         description: product.description[locale],
-        image: `${BASE_URL}${product.image}`,
+        image: absoluteUrl(product.image),
         sku: product.id,
         category: categoryLabel,
         offers: {
           '@type': 'Offer',
+          '@id': `${productUrl}#offer`,
           url: productUrl,
           priceCurrency: 'UAH',
           price: product.price,
-          availability:
-            product.status === 'available'
-              ? 'https://schema.org/InStock'
-              : 'https://schema.org/PreOrder',
+          availability: product.status === 'available' ? 'https://schema.org/InStock' : undefined,
+          priceSpecification: {
+            '@type': 'UnitPriceSpecification',
+            price: product.price,
+            priceCurrency: 'UAH',
+            referenceQuantity: {
+              '@type': 'QuantitativeValue',
+              value: 1,
+              unitText: product.unit[locale],
+            },
+          },
           itemCondition: 'https://schema.org/NewCondition',
           seller: {
             '@type': 'LocalBusiness',
+            '@id': BUSINESS_ID,
             name: siteName,
             telephone: contacts.phones.map((phone) => phone.number),
             address: {
@@ -377,16 +449,23 @@ function buildProductJsonLd(
       },
       {
         '@type': 'BreadcrumbList',
+        '@id': `${productUrl}#breadcrumbs`,
         itemListElement: [
           {
             '@type': 'ListItem',
             position: 1,
             name: pageText[locale].homeBreadcrumb,
-            item: `${BASE_URL}/${locale}#products`,
+            item: absoluteUrl(`/${locale}`),
           },
           {
             '@type': 'ListItem',
             position: 2,
+            name: categoryLabel,
+            item: absoluteUrl(`/${locale}/categories/${product.category}`),
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
             name: product.name[locale],
             item: productUrl,
           },

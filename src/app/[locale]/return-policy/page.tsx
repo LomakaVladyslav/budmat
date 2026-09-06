@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import { absoluteUrl, getLanguageAlternates } from '@/lib/seo'
 import type { Locale } from '@/types/common.types'
-import { defaultLocale, isValidLocale, locales } from '@/lib/i18n/config'
+import { isValidLocale, locales } from '@/lib/i18n/config'
 import { getDictionary } from '@/lib/i18n/getDictionary'
 import { contacts } from '@/data/contacts'
 import { Header } from '@/components/shared/Header'
@@ -9,8 +11,6 @@ import { Footer } from '@/components/shared/Footer'
 interface ReturnPolicyPageProps {
   params: Promise<{ locale: string }>
 }
-
-const baseUrl = 'https://budmat-kaharlyk.com.ua'
 
 interface PolicyContentBlock {
   id: string
@@ -24,7 +24,8 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: ReturnPolicyPageProps): Promise<Metadata> {
   const { locale: rawLocale } = await params
-  const locale: Locale = isValidLocale(rawLocale) ? rawLocale : defaultLocale
+  if (!isValidLocale(rawLocale)) notFound()
+  const locale: Locale = rawLocale
   const dict = await getDictionary(locale)
 
   return {
@@ -32,19 +33,15 @@ export async function generateMetadata({ params }: ReturnPolicyPageProps): Promi
     description: dict.returnPolicy.metaDescription,
     alternates: {
       canonical: `/${locale}/return-policy`,
-      languages: {
-        uk: '/uk/return-policy',
-        ru: '/ru/return-policy',
-        'x-default': '/uk/return-policy',
-      },
+      languages: getLanguageAlternates('/return-policy'),
     },
     openGraph: {
       title: dict.returnPolicy.metaTitle,
       description: dict.returnPolicy.metaDescription,
-      url: `${baseUrl}/${locale}/return-policy`,
+      url: absoluteUrl(`/${locale}/return-policy`),
       siteName: dict.meta.siteName,
       locale: locale === 'uk' ? 'uk_UA' : 'ru_UA',
-      type: 'article',
+      type: 'website',
     },
     robots: {
       index: true,
@@ -55,17 +52,18 @@ export async function generateMetadata({ params }: ReturnPolicyPageProps): Promi
 
 export default async function ReturnPolicyPage({ params }: ReturnPolicyPageProps) {
   const { locale: rawLocale } = await params
-  const locale: Locale = isValidLocale(rawLocale) ? rawLocale : defaultLocale
+  if (!isValidLocale(rawLocale)) notFound()
+  const locale: Locale = rawLocale
   const dict = await getDictionary(locale)
 
   return (
     <>
       <Header locale={locale} dict={dict} />
 
-      <main className="min-h-screen bg-surface">
+      <main id="main-content" className="min-h-screen bg-surface">
         <section className="border-b border-surface-border bg-surface-card pt-28">
           <div className="mx-auto max-w-5xl px-4 pb-12 sm:px-6 lg:px-8">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-brand-500">
+            <p className="mb-3 text-sm font-semibold uppercase tracking-wider text-brand-content">
               {dict.returnPolicy.eyebrow}
             </p>
             <h1 className="font-display text-4xl font-bold leading-tight text-ink sm:text-5xl">
@@ -118,7 +116,7 @@ export default async function ReturnPolicyPage({ params }: ReturnPolicyPageProps
                   <a
                     key={phone.number}
                     href={`tel:${phone.number}`}
-                    className="block rounded-lg border border-surface-border bg-surface-muted px-3 py-2.5 text-sm font-semibold text-brand-400 transition-colors hover:border-brand-500/30 hover:text-brand-300"
+                    className="block rounded-lg border border-surface-border bg-surface-muted px-3 py-2.5 text-sm font-semibold text-brand-content transition-colors hover:border-brand-500/30 hover:text-ink"
                   >
                     {phone.display}
                   </a>

@@ -1,17 +1,27 @@
 'use client'
 
+import { useRef } from 'react'
+
 interface SearchBarProps {
   value: string
   onChange: (value: string) => void
   placeholder: string
+  clearLabel?: string
 }
 
-export function SearchBar({ value, onChange, placeholder }: SearchBarProps) {
+export function SearchBar({
+  value,
+  onChange,
+  placeholder,
+  clearLabel = 'Очистити пошук',
+}: SearchBarProps) {
+  const inputRef = useRef<HTMLInputElement>(null)
+
   return (
     <div className="relative">
-      <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+      <div className="pointer-events-none absolute inset-y-0 left-4 flex items-center">
         <svg
-          className="w-4 h-4 text-ink-muted"
+          className="h-4 w-4 text-ink-muted"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -26,20 +36,34 @@ export function SearchBar({ value, onChange, placeholder }: SearchBarProps) {
         </svg>
       </div>
       <input
+        ref={inputRef}
         type="search"
+        name="catalog-search"
+        autoComplete="off"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full pl-11 pr-4 py-3 bg-surface-card border border-surface-border rounded-xl text-ink placeholder:text-ink-faint text-sm focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors"
+        className="w-full rounded-xl border border-surface-border bg-surface-card py-3 pl-11 pr-12 text-sm text-ink transition-colors placeholder:text-ink-muted focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 [&::-webkit-search-cancel-button]:appearance-none"
         aria-label={placeholder}
       />
       {value && (
         <button
-          onClick={() => onChange('')}
-          className="absolute inset-y-0 right-3 flex items-center px-1 text-ink-muted hover:text-ink transition-colors"
-          aria-label="Очистити пошук"
+          type="button"
+          onClick={() => {
+            onChange('')
+            inputRef.current?.focus()
+          }}
+          className="absolute inset-y-0 right-1 flex w-11 items-center justify-center text-ink-muted transition-colors hover:text-ink"
+          aria-label={clearLabel}
         >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+            aria-hidden="true"
+          >
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>

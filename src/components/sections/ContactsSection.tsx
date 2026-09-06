@@ -66,7 +66,7 @@ export function ContactsSection({ locale, dict }: ContactsSectionProps) {
                 href={`https://maps.google.com/?q=${mapQuery}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-brand-400 transition-colors hover:text-brand-300"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-brand-content transition-colors hover:text-ink"
               >
                 <svg
                   className="h-4 w-4"
@@ -110,7 +110,7 @@ export function ContactsSection({ locale, dict }: ContactsSectionProps) {
                       item.hours.toLowerCase().includes('вихідний') ||
                       item.hours.toLowerCase().includes('выходной')
                         ? 'text-ink-faint'
-                        : 'text-brand-400'
+                        : 'text-brand-content'
                     }`}
                   >
                     {item.hours}

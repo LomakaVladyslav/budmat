@@ -8,6 +8,7 @@ import { contacts } from '@/data/contacts'
 import { locales, isValidLocale, defaultLocale } from '@/lib/i18n/config'
 import { getDictionary } from '@/lib/i18n/getDictionary'
 import { getAllEquipment } from '@/lib/repositories/equipment.repository'
+import { absoluteUrl, BUSINESS_ID, getLanguageAlternates, serializeJsonLd } from '@/lib/seo'
 import { Header } from '@/components/shared/Header'
 import { Footer } from '@/components/shared/Footer'
 import { ContactsSection } from '@/components/sections/ContactsSection'
@@ -15,15 +16,16 @@ import { PhoneButton } from '@/components/ui/PhoneButton'
 import { Badge } from '@/components/ui/Badge'
 import { formatPrice } from '@/utils/formatPrice'
 
-const BASE_URL = 'https://budmat-kaharlyk.com.ua'
-
 interface EquipmentPageProps {
   params: Promise<{ locale: string; equipmentId: string }>
 }
 
 const pageText = {
   uk: {
-    backToCatalog: 'До спецтехніки',
+    homeBreadcrumb: 'Головна',
+    catalogBreadcrumb: 'Послуги спецтехніки',
+    breadcrumbs: 'Навігаційний шлях',
+    location: 'в Кагарлику',
     serviceBadge: 'Послуга спецтехніки',
     price: 'Ціна',
     area: 'Регіон роботи',
@@ -33,11 +35,17 @@ const pageText = {
       'Подачу техніки, доступність на потрібну дату, маршрут, обсяг робіт і фінальну вартість уточнюйте телефоном.',
     relatedTitle: 'Інші послуги спецтехніки',
     relatedSubtitle: 'Ще кілька варіантів для будівельних і земляних робіт',
-    homeBreadcrumb: 'Послуги спецтехніки',
+    orderDetailsTitle: 'Що підготувати для замовлення',
+    orderWork: 'Вид і приблизний обсяг робіт',
+    orderAddress: 'Адресу та бажану дату подачі техніки',
+    orderAccess: 'Інформацію про під’їзд і місце роботи',
     contractPrice: 'Ціна договірна',
   },
   ru: {
-    backToCatalog: 'К спецтехнике',
+    homeBreadcrumb: 'Главная',
+    catalogBreadcrumb: 'Услуги спецтехники',
+    breadcrumbs: 'Навигационная цепочка',
+    location: 'в Кагарлыке',
     serviceBadge: 'Услуга спецтехники',
     price: 'Цена',
     area: 'Регион работы',
@@ -47,7 +55,10 @@ const pageText = {
       'Подачу техники, доступность на нужную дату, маршрут, объем работ и финальную стоимость уточняйте по телефону.',
     relatedTitle: 'Другие услуги спецтехники',
     relatedSubtitle: 'Еще несколько вариантов для строительных и земляных работ',
-    homeBreadcrumb: 'Услуги спецтехники',
+    orderDetailsTitle: 'Что подготовить для заказа',
+    orderWork: 'Вид и примерный объем работ',
+    orderAddress: 'Адрес и желаемую дату подачи техники',
+    orderAccess: 'Информацию о подъезде и месте работы',
     contractPrice: 'Цена договорная',
   },
 } satisfies Record<Locale, Record<string, string>>
@@ -76,12 +87,14 @@ export async function generateMetadata({ params }: EquipmentPageProps): Promise<
   const priceText = getEquipmentPriceText(item, locale, 'грн')
   const title =
     locale === 'uk'
-      ? `${item.name[locale]} в Кагарлику - ${priceText} | ${dict.meta.siteName}`
-      : `${item.name[locale]} в Кагарлыке - ${priceText} | ${dict.meta.siteName}`
+      ? `${item.name[locale]} в Кагарлику — ціна | БудМат`
+      : `${item.name[locale]} в Кагарлыке — цена | БудМат`
+  const summary =
+    item.description[locale].match(/^.*?[.!?](?:\s|$)/)?.[0].trim() ?? item.description[locale]
   const description =
     locale === 'uk'
-      ? `${item.description[locale]} Ціна: ${priceText}.`
-      : `${item.description[locale]} Цена: ${priceText}.`
+      ? `${summary} Кагарлик та Київська область. ${priceText}.`
+      : `${summary} Кагарлык и Киевская область. ${priceText}.`
   const equipmentPath = `/${locale}/equipment/${item.id}`
   const locationKeywords =
     locale === 'uk'
@@ -105,13 +118,14 @@ export async function generateMetadata({ params }: EquipmentPageProps): Promise<
     openGraph: {
       title,
       description,
-      url: equipmentPath,
+      url: absoluteUrl(equipmentPath),
       siteName: dict.meta.siteName,
       locale: locale === 'uk' ? 'uk_UA' : 'ru_UA',
+      alternateLocale: locale === 'uk' ? 'ru_UA' : 'uk_UA',
       type: 'website',
       images: [
         {
-          url: item.image,
+          url: absoluteUrl(item.image),
           alt: item.name[locale],
         },
       ],
@@ -120,15 +134,11 @@ export async function generateMetadata({ params }: EquipmentPageProps): Promise<
       card: 'summary_large_image',
       title,
       description,
-      images: [item.image],
+      images: [absoluteUrl(item.image)],
     },
     alternates: {
-      canonical: equipmentPath,
-      languages: {
-        uk: `/uk/equipment/${item.id}`,
-        ru: `/ru/equipment/${item.id}`,
-        'x-default': `/uk/equipment/${item.id}`,
-      },
+      canonical: absoluteUrl(equipmentPath),
+      languages: getLanguageAlternates(`/equipment/${item.id}`),
     },
     robots: {
       index: true,
@@ -157,7 +167,7 @@ export default async function EquipmentPage({ params }: EquipmentPageProps) {
   const relatedEquipment = getAllEquipment()
     .filter((related) => related.id !== item.id)
     .slice(0, 3)
-  const equipmentUrl = `${BASE_URL}/${locale}/equipment/${item.id}`
+  const equipmentUrl = absoluteUrl(`/${locale}/equipment/${item.id}`)
   const equipmentJsonLd = buildEquipmentJsonLd(item, locale, equipmentUrl, dict.meta.siteName)
 
   return (
@@ -165,7 +175,7 @@ export default async function EquipmentPage({ params }: EquipmentPageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(equipmentJsonLd).replace(/</g, '\\u003c'),
+          __html: serializeJsonLd(equipmentJsonLd),
         }}
       />
 
@@ -174,17 +184,34 @@ export default async function EquipmentPage({ params }: EquipmentPageProps) {
       <main id="main-content" className="pt-24">
         <section className="py-8 md:py-14">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm" aria-label="Breadcrumb">
-              <Link
-                href={`/${locale}#equipment`}
-                className="font-semibold text-brand-400 transition-colors hover:text-brand-300"
-              >
-                {text.backToCatalog}
-              </Link>
-              <span className="text-ink-faint" aria-hidden="true">
-                /
-              </span>
-              <span className="text-ink-muted">{item.name[locale]}</span>
+            <nav className="mb-6 text-sm" aria-label={text.breadcrumbs}>
+              <ol className="flex flex-wrap items-center gap-2">
+                <li>
+                  <Link
+                    href={`/${locale}`}
+                    className="font-semibold text-brand-content hover:text-ink"
+                  >
+                    {text.homeBreadcrumb}
+                  </Link>
+                </li>
+                <li aria-hidden="true" className="text-ink-faint">
+                  /
+                </li>
+                <li>
+                  <Link
+                    href={`/${locale}#equipment`}
+                    className="font-semibold text-brand-content hover:text-ink"
+                  >
+                    {text.catalogBreadcrumb}
+                  </Link>
+                </li>
+                <li aria-hidden="true" className="text-ink-faint">
+                  /
+                </li>
+                <li aria-current="page" className="text-ink-muted">
+                  {item.name[locale]}
+                </li>
+              </ol>
             </nav>
 
             <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)] lg:items-start">
@@ -210,7 +237,7 @@ export default async function EquipmentPage({ params }: EquipmentPageProps) {
                 </div>
 
                 <h1 className="font-display text-3xl font-bold leading-tight text-ink sm:text-4xl lg:text-5xl">
-                  {item.name[locale]}
+                  {item.name[locale]} {text.location}
                 </h1>
 
                 <p className="mt-4 text-base leading-relaxed text-ink-muted md:text-lg">
@@ -221,14 +248,14 @@ export default async function EquipmentPage({ params }: EquipmentPageProps) {
                   <div className="rounded-2xl border border-surface-border bg-surface-card p-4">
                     <dt className="text-sm font-semibold text-ink-muted">{text.price}</dt>
                     <dd className="mt-1">
-                      <span className="font-display text-3xl font-bold text-brand-400">
+                      <span className="font-display text-3xl font-bold text-brand-content">
                         {item.price === null
                           ? (item.priceLabel?.[locale] ?? text.contractPrice)
                           : `${formatPrice(item.price)} ₴`}
                       </span>
                       {item.price !== null && item.priceNote && (
                         <span className="ml-2 text-sm text-ink-muted">
-                          / {item.priceNote[locale]}
+                          {item.priceNote[locale]}
                         </span>
                       )}
                     </dd>
@@ -251,7 +278,7 @@ export default async function EquipmentPage({ params }: EquipmentPageProps) {
           <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-3 lg:px-8">
             <div className="lg:col-span-2">
               <h2 className="font-display text-xl font-bold text-ink">{t.modalSpecs}</h2>
-              <div className="mt-4 overflow-hidden rounded-xl border border-surface-border">
+              <dl className="mt-4 overflow-hidden rounded-xl border border-surface-border">
                 {item.specifications.map((spec, index) => (
                   <div
                     key={`${spec.label[locale]}-${spec.value[locale]}`}
@@ -259,11 +286,11 @@ export default async function EquipmentPage({ params }: EquipmentPageProps) {
                       index % 2 === 0 ? 'bg-surface-muted' : 'bg-surface-card'
                     }`}
                   >
-                    <span className="text-ink-muted">{spec.label[locale]}</span>
-                    <span className="text-right font-semibold text-ink">{spec.value[locale]}</span>
+                    <dt className="text-ink-muted">{spec.label[locale]}</dt>
+                    <dd className="text-right font-semibold text-ink">{spec.value[locale]}</dd>
                   </div>
                 ))}
-              </div>
+              </dl>
             </div>
 
             <div>
@@ -274,7 +301,7 @@ export default async function EquipmentPage({ params }: EquipmentPageProps) {
                     key={app}
                     className="flex items-start gap-3 text-sm leading-relaxed text-ink-muted"
                   >
-                    <span className="mt-0.5 shrink-0 text-brand-500" aria-hidden="true">
+                    <span className="mt-0.5 shrink-0 text-brand-content" aria-hidden="true">
                       ✓
                     </span>
                     {app}
@@ -287,6 +314,12 @@ export default async function EquipmentPage({ params }: EquipmentPageProps) {
               <p className="mt-3 text-sm leading-relaxed text-ink-muted">
                 {contacts.address[locale]}
               </p>
+              <h3 className="mt-6 font-semibold text-ink">{text.orderDetailsTitle}</h3>
+              <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-ink-muted">
+                <li>{text.orderWork}</li>
+                <li>{text.orderAddress}</li>
+                <li>{text.orderAccess}</li>
+              </ul>
             </div>
           </div>
         </section>
@@ -316,10 +349,10 @@ export default async function EquipmentPage({ params }: EquipmentPageProps) {
                       />
                     </div>
                     <div className="p-4">
-                      <h3 className="font-display text-base font-bold leading-snug text-ink transition-colors group-hover:text-brand-400">
+                      <h3 className="font-display text-base font-bold leading-snug text-ink transition-colors group-hover:text-brand-content">
                         {related.name[locale]}
                       </h3>
-                      <p className="mt-3 font-display text-xl font-bold text-brand-400">
+                      <p className="mt-3 font-display text-xl font-bold text-brand-content">
                         {getEquipmentPriceText(related, locale)}
                       </p>
                     </div>
@@ -348,7 +381,7 @@ function getEquipmentPriceText(item: Equipment, locale: Locale, currency = '₴'
   }
 
   const price = `${formatPrice(item.price)} ${currency}`
-  return item.priceNote ? `${price} / ${item.priceNote[locale]}` : price
+  return item.priceNote ? `${price} ${item.priceNote[locale]}` : price
 }
 
 function buildEquipmentJsonLd(
@@ -361,14 +394,27 @@ function buildEquipmentJsonLd(
     '@context': 'https://schema.org',
     '@graph': [
       {
+        '@type': 'ItemPage',
+        '@id': `${equipmentUrl}#webpage`,
+        url: equipmentUrl,
+        name: `${item.name[locale]} ${pageText[locale].location}`,
+        inLanguage: locale,
+        mainEntity: { '@id': `${equipmentUrl}#service` },
+        breadcrumb: { '@id': `${equipmentUrl}#breadcrumbs` },
+      },
+      {
         '@type': 'Service',
+        '@id': `${equipmentUrl}#service`,
+        url: equipmentUrl,
+        mainEntityOfPage: { '@id': `${equipmentUrl}#webpage` },
         name: item.name[locale],
         description: item.description[locale],
-        image: `${BASE_URL}${item.image}`,
+        image: absoluteUrl(item.image),
         serviceType: pageText[locale].serviceBadge,
         areaServed: pageText[locale].areaValue,
         provider: {
           '@type': 'LocalBusiness',
+          '@id': BUSINESS_ID,
           name: siteName,
           telephone: contacts.phones.map((phone) => phone.number),
           address: {
@@ -382,24 +428,45 @@ function buildEquipmentJsonLd(
         },
         offers: {
           '@type': 'Offer',
+          '@id': `${equipmentUrl}#offer`,
           url: equipmentUrl,
+          name: getEquipmentPriceText(item, locale, 'грн'),
           priceCurrency: item.price !== null ? 'UAH' : undefined,
           price: item.price ?? undefined,
-          availability: 'https://schema.org/InStock',
+          priceSpecification:
+            item.price !== null && item.priceNote
+              ? {
+                  '@type': 'UnitPriceSpecification',
+                  price: item.price,
+                  priceCurrency: 'UAH',
+                  referenceQuantity: {
+                    '@type': 'QuantitativeValue',
+                    value: 1,
+                    unitText: item.priceNote[locale].replace(/^за\s+/, ''),
+                  },
+                }
+              : undefined,
         },
       },
       {
         '@type': 'BreadcrumbList',
+        '@id': `${equipmentUrl}#breadcrumbs`,
         itemListElement: [
           {
             '@type': 'ListItem',
             position: 1,
             name: pageText[locale].homeBreadcrumb,
-            item: `${BASE_URL}/${locale}`,
+            item: absoluteUrl(`/${locale}`),
           },
           {
             '@type': 'ListItem',
             position: 2,
+            name: pageText[locale].catalogBreadcrumb,
+            item: absoluteUrl(`/${locale}#equipment`),
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
             name: item.name[locale],
             item: equipmentUrl,
           },

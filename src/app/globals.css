@@ -2,18 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap');
-
 :root {
-  --font-inter: 'Inter', system-ui, sans-serif;
-  --font-manrope: 'Manrope', system-ui, sans-serif;
+  --color-brand-content: 154 52 18;
+  --color-brand-gradient-end: 199 71 6;
   --color-surface: 248 250 252;
   --color-surface-card: 255 255 255;
   --color-surface-muted: 241 245 249;
   --color-surface-border: 203 213 225;
   --color-ink: 17 24 39;
   --color-ink-muted: 71 85 105;
-  --color-ink-faint: 148 163 184;
+  --color-ink-faint: 100 116 139;
   --color-grid: 203 213 225;
   --color-selection-bg: rgb(255 125 15 / 0.24);
   --color-selection-text: rgb(17 24 39);
@@ -25,13 +23,15 @@
 }
 
 html[data-theme='light'] {
+  --color-brand-content: 154 52 18;
+  --color-brand-gradient-end: 199 71 6;
   --color-surface: 248 250 252;
   --color-surface-card: 255 255 255;
   --color-surface-muted: 241 245 249;
   --color-surface-border: 203 213 225;
   --color-ink: 17 24 39;
   --color-ink-muted: 71 85 105;
-  --color-ink-faint: 148 163 184;
+  --color-ink-faint: 100 116 139;
   --color-grid: 203 213 225;
   --color-selection-bg: rgb(255 125 15 / 0.24);
   --color-selection-text: rgb(17 24 39);
@@ -43,13 +43,15 @@ html[data-theme='light'] {
 }
 
 html[data-theme='dark'] {
+  --color-brand-content: 255 157 55;
+  --color-brand-gradient-end: 255 125 15;
   --color-surface: 15 17 23;
   --color-surface-card: 23 27 38;
   --color-surface-muted: 30 36 51;
   --color-surface-border: 42 49 71;
   --color-ink: 240 242 247;
   --color-ink-muted: 139 149 170;
-  --color-ink-faint: 74 85 104;
+  --color-ink-faint: 139 149 170;
   --color-grid: 42 49 71;
   --color-selection-bg: rgb(255 125 15 / 0.25);
   --color-selection-text: rgb(240 242 247);
@@ -67,12 +69,14 @@ html[data-theme='dark'] {
 
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 12rem;
+    scrollbar-gutter: stable;
   }
 
   body {
     background-color: rgb(var(--color-surface));
     color: rgb(var(--color-ink));
-    font-family: var(--font-inter);
+    font-family: var(--font-inter, system-ui), sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -102,18 +106,23 @@ html[data-theme='dark'] {
 
 @layer utilities {
   .font-display {
-    font-family: var(--font-manrope);
+    font-family: var(--font-manrope, system-ui), sans-serif;
   }
 
   .text-gradient {
-    background: linear-gradient(135deg, #ff9d37 0%, #ff7d0f 100%);
+    background: linear-gradient(
+      135deg,
+      rgb(var(--color-brand-content)) 0%,
+      rgb(var(--color-brand-gradient-end)) 100%
+    );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .bg-grid {
-    background-image: linear-gradient(rgb(var(--color-grid) / 0.4) 1px, transparent 1px),
+    background-image:
+      linear-gradient(rgb(var(--color-grid) / 0.4) 1px, transparent 1px),
       linear-gradient(90deg, rgb(var(--color-grid) / 0.4) 1px, transparent 1px);
     background-size: 40px 40px;
   }
@@ -124,8 +133,10 @@ html[data-theme='dark'] {
     -webkit-backdrop-filter: blur(12px);
   }
 
-  .modal-backdrop {
+  .site-dialog::backdrop {
     background: var(--modal-backdrop);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
   }
 }
 
@@ -143,6 +154,10 @@ body.modal-open {
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   *,
   ::before,
   ::after {

@@ -1,9 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import type { Dictionary } from '@/lib/i18n/dictionaries/uk'
 import { cn } from '@/utils/cn'
-import { PhoneDialog } from '@/components/ui/PhoneDialog'
+
+const PhoneDialog = dynamic(() =>
+  import('@/components/ui/PhoneDialog').then((module) => module.PhoneDialog)
+)
 
 interface PhoneButtonProps {
   label: string
@@ -32,13 +36,13 @@ export function PhoneButton({
         className={cn(
           'inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
           {
-            'bg-brand-500 text-white shadow-lg shadow-brand-500/20 hover:bg-brand-400 active:bg-brand-600':
+            'bg-brand-500 text-brand-950 shadow-lg shadow-brand-500/20 hover:bg-brand-400 active:bg-brand-600':
               variant === 'primary',
             'border border-surface-border bg-surface-card text-ink hover:border-surface-muted hover:bg-surface-muted':
               variant === 'secondary',
-            'border border-brand-500 text-brand-500 hover:bg-brand-500 hover:text-white':
+            'border border-brand-500 text-brand-content hover:bg-brand-500 hover:text-brand-950':
               variant === 'outline',
-            'px-3 py-1.5 text-sm': size === 'sm',
+            'min-h-11 px-3 py-1.5 text-sm': size === 'sm',
             'px-4 py-2.5 text-sm': size === 'md',
             'px-6 py-3.5 text-base': size === 'lg',
             'w-full': fullWidth,
@@ -46,11 +50,12 @@ export function PhoneButton({
           className
         )}
         aria-haspopup="dialog"
+        aria-expanded={isOpen}
       >
         <PhoneIcon className="h-4 w-4 shrink-0" />
         {label}
       </button>
-      <PhoneDialog isOpen={isOpen} onClose={() => setIsOpen(false)} dict={dict} />
+      {isOpen && <PhoneDialog isOpen onClose={() => setIsOpen(false)} dict={dict} />}
     </>
   )
 }
@@ -73,13 +78,14 @@ export function PhoneNumberButton({ phone, dict, variant }: PhoneNumberButtonPro
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="flex items-center gap-2 text-sm font-semibold text-brand-400 transition-colors hover:text-brand-300"
+          className="flex items-center gap-2 text-sm font-semibold text-brand-content transition-colors hover:text-ink"
           aria-haspopup="dialog"
+          aria-expanded={isOpen}
         >
           <PhoneIcon className="h-4 w-4 shrink-0" />
           {phone.display}
         </button>
-        <PhoneDialog isOpen={isOpen} onClose={() => setIsOpen(false)} dict={dict} />
+        {isOpen && <PhoneDialog isOpen onClose={() => setIsOpen(false)} dict={dict} />}
       </>
     )
   }
@@ -91,13 +97,14 @@ export function PhoneNumberButton({ phone, dict, variant }: PhoneNumberButtonPro
         onClick={() => setIsOpen(true)}
         className="group flex w-full items-center gap-3 rounded-xl border border-surface-border bg-surface-card p-3.5 text-left transition-all duration-200 hover:border-brand-500/30"
         aria-haspopup="dialog"
+        aria-expanded={isOpen}
       >
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-brand-500/20 bg-brand-500/10 transition-colors group-hover:border-brand-500 group-hover:bg-brand-500">
-          <PhoneIcon className="h-4 w-4 text-brand-400 transition-colors group-hover:text-white" />
+          <PhoneIcon className="h-4 w-4 text-brand-content transition-colors group-hover:text-brand-950" />
         </div>
         <span className="text-lg font-semibold tracking-wide text-ink">{phone.display}</span>
       </button>
-      <PhoneDialog isOpen={isOpen} onClose={() => setIsOpen(false)} dict={dict} />
+      {isOpen && <PhoneDialog isOpen onClose={() => setIsOpen(false)} dict={dict} />}
     </>
   )
 }

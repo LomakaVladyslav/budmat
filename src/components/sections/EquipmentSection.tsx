@@ -42,6 +42,9 @@ export function EquipmentSection({ locale, dict, equipment, searchQuery }: Equip
     <section id="equipment" className="py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionTitle title={t.sectionTitle} subtitle={t.sectionSubtitle} />
+        <p role="status" className="sr-only">
+          {t.sectionTitle}: {filtered.length}
+        </p>
 
         {filtered.length > 0 ? (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
@@ -69,6 +72,7 @@ export function EquipmentSection({ locale, dict, equipment, searchQuery }: Equip
         isOpen={!!selected}
         onClose={() => setSelected(null)}
         title={selected?.name[locale] ?? ''}
+        closeLabel={dict.products.modalClose}
       >
         {selected && <EquipmentModalContent item={selected} locale={locale} dict={dict} />}
       </Modal>
@@ -93,6 +97,7 @@ function EquipmentCard({ item, locale, dict, onDetails }: EquipmentCardProps) {
     <article className="group flex flex-col overflow-hidden rounded-2xl border border-surface-border bg-surface-card transition-all duration-300 hover:border-brand-500/30 hover:shadow-xl hover:shadow-brand-500/5">
       <Link
         href={equipmentHref}
+        prefetch={false}
         className="flex flex-1 flex-col focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
         aria-label={`${t.detailsButton}: ${item.name[locale]}`}
       >
@@ -103,7 +108,7 @@ function EquipmentCard({ item, locale, dict, onDetails }: EquipmentCardProps) {
             alt={item.name[locale]}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            sizes="(max-width: 639px) calc(100vw - 32px), (max-width: 767px) calc((100vw - 64px) / 2), (max-width: 1023px) calc((100vw - 72px) / 2), (max-width: 1279px) calc((100vw - 112px) / 3), 389px"
           />
           {item.minimumHours && (
             <Badge variant="muted" className="absolute bottom-3 left-3">
@@ -114,7 +119,7 @@ function EquipmentCard({ item, locale, dict, onDetails }: EquipmentCardProps) {
 
         {/* Content */}
         <div className="flex flex-1 flex-col p-5 pb-3">
-          <h3 className="mb-2 font-display text-lg font-bold leading-snug text-ink transition-colors group-hover:text-brand-400">
+          <h3 className="mb-2 font-display text-lg font-bold leading-snug text-ink transition-colors group-hover:text-brand-content">
             {item.name[locale]}
           </h3>
           <p className="mb-4 line-clamp-2 text-sm leading-relaxed text-ink-muted">
@@ -123,7 +128,7 @@ function EquipmentCard({ item, locale, dict, onDetails }: EquipmentCardProps) {
 
           {/* Price */}
           <div className="mt-auto">
-            <span className="font-display text-2xl font-bold text-brand-400">
+            <span className="font-display text-2xl font-bold text-brand-content">
               {item.price === null ? item.priceLabel?.[locale] : `${formatPrice(item.price)} ₴`}
             </span>
             {item.price !== null && item.priceNote && (
@@ -141,6 +146,7 @@ function EquipmentCard({ item, locale, dict, onDetails }: EquipmentCardProps) {
           onClick={onDetails}
           className="shrink-0 rounded-xl border border-surface-border bg-surface-muted px-3 py-1.5 text-sm font-semibold text-ink-muted transition-colors hover:border-surface-muted hover:text-ink"
           aria-label={`${t.detailsButton}: ${item.name[locale]}`}
+          aria-haspopup="dialog"
         >
           <svg
             className="h-4 w-4"
@@ -191,7 +197,7 @@ function EquipmentModalContent({
       {/* Price & min hours */}
       <div className="flex items-center justify-between">
         <div>
-          <span className="font-display text-3xl font-bold text-brand-400">
+          <span className="font-display text-3xl font-bold text-brand-content">
             {item.price === null ? item.priceLabel?.[locale] : `${formatPrice(item.price)} ₴`}
           </span>
           {item.price !== null && item.priceNote && (
@@ -239,7 +245,7 @@ function EquipmentModalContent({
           <ul className="space-y-2">
             {item.applications[locale].map((app, i) => (
               <li key={i} className="flex items-start gap-2.5 text-sm text-ink-muted">
-                <span className="mt-0.5 shrink-0 text-brand-500" aria-hidden="true">
+                <span className="mt-0.5 shrink-0 text-brand-content" aria-hidden="true">
                   ✓
                 </span>
                 {app}

@@ -4,37 +4,15 @@ import { defaultLocale, isValidLocale } from '@/lib/i18n/config'
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
-
-  // Skip static files and API routes
-  if (
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/api') ||
-    pathname.includes('.') // static files
-  ) {
+  if (pathname.startsWith('/_next') || pathname.startsWith('/api') || pathname.includes('.')) {
     return NextResponse.next()
   }
+  if (isValidLocale(pathname.split('/')[1])) return NextResponse.next()
 
-  if (pathname === '/') {
-    const newUrl = new URL(`/${defaultLocale}`, request.url)
-    return NextResponse.redirect(newUrl, 308)
-  }
-
-  // Check if the path already has a valid locale prefix
-  const pathnameLocale = pathname.split('/')[1]
-  if (isValidLocale(pathnameLocale)) {
-    return NextResponse.next()
-  }
-
-  // Detect locale from Accept-Language header
-  const acceptLanguage = request.headers.get('accept-language') ?? ''
-  const preferredLocale = acceptLanguage.toLowerCase().includes('ru') ? 'ru' : defaultLocale
-
-  // Redirect to locale-prefixed path
-  const locale = isValidLocale(preferredLocale) ? preferredLocale : defaultLocale
-  const newUrl = new URL(`/${locale}${pathname}`, request.url)
-  newUrl.search = request.nextUrl.search
-
-  return NextResponse.redirect(newUrl)
+  // One stable default URL for visitors and crawlers. Preserve campaign/query parameters.
+  const url = request.nextUrl.clone()
+  url.pathname = `/${defaultLocale}${pathname === '/' ? '' : pathname}`
+  return NextResponse.redirect(url, 308)
 }
 
 export const config = {

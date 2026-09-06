@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
+import { SITE_URL } from '@/lib/seo'
 import './globals.css'
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://budmat-kaharlyk.com.ua'),
+  metadataBase: new URL(SITE_URL),
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: '256x256' },

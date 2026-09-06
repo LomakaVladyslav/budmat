@@ -1,6 +1,7 @@
 'use client'
 
-import { usePathname, useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import type { Locale } from '@/types/common.types'
 import type { Dictionary } from '@/lib/i18n/dictionaries/uk'
 import { locales } from '@/lib/i18n/config'
@@ -13,33 +14,32 @@ interface LocaleSwitcherProps {
 
 export function LocaleSwitcher({ currentLocale, dict }: LocaleSwitcherProps) {
   const pathname = usePathname()
-  const router = useRouter()
-
-  const switchLocale = (locale: Locale) => {
-    // Replace locale prefix in URL
-    const segments = pathname.split('/')
-    segments[1] = locale
-    router.push(segments.join('/'))
-  }
+  const pagePath = pathname.replace(/^\/(uk|ru)(?=\/|$)/, '')
 
   return (
-    <div className="flex items-center gap-0.5 bg-surface-card border border-surface-border rounded-xl p-1">
+    <nav
+      className="flex items-center gap-0.5 rounded-xl border border-surface-border bg-surface-card p-1"
+      aria-label={currentLocale === 'uk' ? 'Мова сайту' : 'Язык сайта'}
+    >
       {locales.map((locale) => (
-        <button
+        <Link
           key={locale}
-          onClick={() => switchLocale(locale)}
+          href={`/${locale}${pagePath}`}
+          hrefLang={locale}
+          lang={locale}
+          prefetch={false}
           className={cn(
-            'px-2.5 py-1 text-xs font-bold rounded-lg transition-all duration-200',
+            'rounded-lg px-2 py-2 text-xs font-bold transition-all duration-200',
             locale === currentLocale
-              ? 'bg-brand-500 text-white'
+              ? 'bg-brand-500 text-brand-950'
               : 'text-ink-muted hover:text-ink'
           )}
-          aria-label={`Перейти на ${locale.toUpperCase()}`}
-          aria-current={locale === currentLocale ? 'true' : undefined}
+          aria-label={locale === 'uk' ? 'Українська' : 'Русский'}
+          aria-current={locale === currentLocale ? 'page' : undefined}
         >
           {dict.localeSwitcher[locale]}
-        </button>
+        </Link>
       ))}
-    </div>
+    </nav>
   )
 }

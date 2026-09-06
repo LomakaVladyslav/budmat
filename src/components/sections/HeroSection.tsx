@@ -12,7 +12,7 @@ export function HeroSection({ dict }: HeroSectionProps) {
   return (
     <section
       className="relative flex min-h-screen items-center overflow-hidden"
-      aria-label="Головна секція"
+      aria-labelledby="hero-title"
     >
       {/* Background image */}
       <div className="absolute inset-0 z-0">
@@ -47,8 +47,8 @@ export function HeroSection({ dict }: HeroSectionProps) {
           </div>
 
           <h1
-            className="mb-6 animate-fade-up font-display text-4xl font-bold leading-tight text-ink sm:text-5xl md:text-6xl lg:text-7xl"
-            style={{ animationDelay: '100ms' }}
+            id="hero-title"
+            className="mb-6 font-display text-4xl font-bold leading-tight text-ink sm:text-5xl md:text-6xl lg:text-7xl"
           >
             {dict.hero.headline.split(' ').map((word, i) =>
               i === 0 ? (
@@ -61,10 +61,7 @@ export function HeroSection({ dict }: HeroSectionProps) {
             )}
           </h1>
 
-          <p
-            className="mb-10 max-w-xl animate-fade-up text-lg leading-relaxed text-ink-muted md:text-xl"
-            style={{ animationDelay: '200ms' }}
-          >
+          <p className="mb-10 max-w-xl text-lg leading-relaxed text-ink-muted md:text-xl">
             {dict.hero.subheadline}
           </p>
 
@@ -84,6 +81,7 @@ export function HeroSection({ dict }: HeroSectionProps) {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
                 strokeWidth={2}
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"

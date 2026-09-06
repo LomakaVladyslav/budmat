@@ -1,8 +1,18 @@
 import type { Metadata } from 'next'
-import type { Locale } from '@/types/common.types'
-import { locales, isValidLocale, defaultLocale } from '@/lib/i18n/config'
-import { getDictionary } from '@/lib/i18n/getDictionary'
+import { Inter, Manrope } from 'next/font/google'
+import { locales, isValidLocale } from '@/lib/i18n/config'
 import { notFound } from 'next/navigation'
+
+const inter = Inter({
+  subsets: ['latin', 'cyrillic', 'cyrillic-ext'],
+  display: 'swap',
+  variable: '--font-inter',
+})
+const manrope = Manrope({
+  subsets: ['latin', 'cyrillic', 'cyrillic-ext'],
+  display: 'swap',
+  variable: '--font-manrope',
+})
 
 interface LocaleLayoutProps {
   children: React.ReactNode
@@ -20,53 +30,29 @@ const themeScript = `
 })()
 `
 
-export async function generateStaticParams() {
+export const metadata: Metadata = {
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
+  },
+}
+
+export function generateStaticParams() {
   return locales.map((locale) => ({ locale }))
 }
 
-export async function generateMetadata({ params }: LocaleLayoutProps): Promise<Metadata> {
-  const { locale: rawLocale } = await params
-  const locale: Locale = isValidLocale(rawLocale) ? rawLocale : defaultLocale
-  const dict = await getDictionary(locale)
-
-  return {
-    title: dict.meta.title,
-    description: dict.meta.description,
-    keywords:
-      locale === 'uk'
-        ? 'будівельні матеріали, цемент, щебінь, пісок, газоблоки, послуги спецтехніки, екскаватор, бульдозер, Кагарлик, Київська область'
-        : 'строительные материалы, цемент, щебень, песок, газоблоки, услуги спецтехники, экскаватор, бульдозер, Кагарлык, Киевская область',
-    openGraph: {
-      title: dict.meta.title,
-      description: dict.meta.description,
-      siteName: dict.meta.siteName,
-      locale: locale === 'uk' ? 'uk_UA' : 'ru_UA',
-      type: 'website',
-    },
-    alternates: {
-      canonical: `/${locale}`,
-      languages: {
-        uk: '/uk',
-        ru: '/ru',
-        'x-default': '/uk',
-      },
-    },
-    robots: {
-      index: true,
-      follow: true,
-    },
-  }
-}
-
 export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
-  const { locale: rawLocale } = await params
-
-  if (!isValidLocale(rawLocale)) {
-    notFound()
-  }
+  const { locale } = await params
+  if (!isValidLocale(locale)) notFound()
 
   return (
-    <html lang={rawLocale} className="scroll-smooth" data-theme="light" suppressHydrationWarning>
+    <html
+      lang={locale}
+      className={`${inter.variable} ${manrope.variable} scroll-smooth`}
+      data-theme="light"
+      suppressHydrationWarning
+    >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

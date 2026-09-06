@@ -44,7 +44,7 @@ export function ThemeToggle({ dict }: ThemeToggleProps) {
     <button
       type="button"
       onClick={toggleTheme}
-      className="w-10 h-10 rounded-xl bg-surface-card border border-surface-border flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface-muted transition-colors"
+      className="flex h-10 w-10 items-center justify-center rounded-xl border border-surface-border bg-surface-card text-ink-muted transition-colors hover:bg-surface-muted hover:text-ink"
       aria-label={label}
       aria-pressed={isDark}
       title={label}
@@ -57,7 +57,7 @@ export function ThemeToggle({ dict }: ThemeToggleProps) {
 function SunIcon() {
   return (
     <svg
-      className="w-5 h-5"
+      className="h-5 w-5"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -76,7 +76,7 @@ function SunIcon() {
 function MoonIcon() {
   return (
     <svg
-      className="w-5 h-5"
+      className="h-5 w-5"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"

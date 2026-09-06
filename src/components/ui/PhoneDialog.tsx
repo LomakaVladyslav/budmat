@@ -31,32 +31,33 @@ export function PhoneDialog({ isOpen, onClose, dict }: PhoneDialogProps) {
   }, [])
 
   const copyPhone = async (phoneNumber: string) => {
+    let copied = false
+
     try {
       if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(phoneNumber)
+        copied = true
       } else {
-        copyWithFallback(phoneNumber)
+        copied = copyWithFallback(phoneNumber)
       }
-
-      setCopiedPhone(phoneNumber)
-
-      if (resetTimer.current) {
-        window.clearTimeout(resetTimer.current)
-      }
-
-      resetTimer.current = window.setTimeout(() => {
-        setCopiedPhone(null)
-      }, 1800)
     } catch {
-      copyWithFallback(phoneNumber)
-      setCopiedPhone(phoneNumber)
+      copied = copyWithFallback(phoneNumber)
     }
+
+    if (!copied) return
+    setCopiedPhone(phoneNumber)
+
+    if (resetTimer.current) window.clearTimeout(resetTimer.current)
+    resetTimer.current = window.setTimeout(() => setCopiedPhone(null), 1800)
   }
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={t.title} size="md" closeLabel={t.close}>
       <div className="space-y-5">
         <p className="text-sm leading-relaxed text-ink-muted">{t.subtitle}</p>
+        <p role="status" className="sr-only">
+          {copiedPhone ? `${t.copied}: ${copiedPhone}` : ''}
+        </p>
 
         <div className="space-y-3">
           {contacts.phones.map((phone) => {
@@ -68,7 +69,7 @@ export function PhoneDialog({ isOpen, onClose, dict }: PhoneDialogProps) {
                 className="rounded-xl border border-surface-border bg-surface-muted p-4"
               >
                 <div className="mb-3 flex items-center gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-brand-500/20 bg-brand-500/10 text-brand-400">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-brand-500/20 bg-brand-500/10 text-brand-content">
                     <PhoneIcon className="h-4 w-4" />
                   </div>
                   <span className="font-display text-xl font-bold tracking-wide text-ink">
@@ -80,7 +81,7 @@ export function PhoneDialog({ isOpen, onClose, dict }: PhoneDialogProps) {
                   <a
                     href={`tel:${phone.number}`}
                     onClick={onClose}
-                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand-500/20 transition-colors hover:bg-brand-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 active:bg-brand-600"
+                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-semibold text-brand-950 shadow-lg shadow-brand-500/20 transition-colors hover:bg-brand-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 active:bg-brand-600"
                     aria-label={`${t.call}: ${phone.display}`}
                   >
                     <PhoneIcon className="h-4 w-4" />
@@ -93,7 +94,7 @@ export function PhoneDialog({ isOpen, onClose, dict }: PhoneDialogProps) {
                     aria-label={`${t.copy}: ${phone.display}`}
                   >
                     {isCopied ? (
-                      <CheckIcon className="h-4 w-4 text-brand-500" />
+                      <CheckIcon className="h-4 w-4 text-brand-content" />
                     ) : (
                       <CopyIcon className="h-4 w-4" />
                     )}
@@ -110,15 +111,24 @@ export function PhoneDialog({ isOpen, onClose, dict }: PhoneDialogProps) {
 }
 
 function copyWithFallback(value: string) {
+  const previousFocus = document.activeElement
   const textarea = document.createElement('textarea')
   textarea.value = value
   textarea.setAttribute('readonly', '')
   textarea.style.position = 'fixed'
   textarea.style.top = '-9999px'
-  document.body.appendChild(textarea)
-  textarea.select()
-  document.execCommand('copy')
-  document.body.removeChild(textarea)
+  // Keep the fallback inside the active dialog; the rest of the page is inert.
+  const container = previousFocus?.closest('dialog') ?? document.body
+  container.appendChild(textarea)
+  try {
+    textarea.select()
+    return document.execCommand('copy')
+  } catch {
+    return false
+  } finally {
+    textarea.remove()
+    if (previousFocus instanceof HTMLElement) previousFocus.focus({ preventScroll: true })
+  }
 }
 
 function PhoneIcon({ className }: { className?: string }) {
