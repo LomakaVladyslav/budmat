@@ -151,7 +151,7 @@ export const products: Product[] = [
   {
     id: 'cement-m500-25kg',
     category: 'cement',
-    name: { uk: 'Цемент CEMARK М500 25 кг', ru: 'Цемент CEMARK М500 25 кг' },
+    name: { uk: 'Цемент М500 25 кг', ru: 'Цемент М500 25 кг' },
     price: 220,
     unit: { uk: 'мішок 25 кг', ru: 'мешок 25 кг' },
     description: {
@@ -166,7 +166,7 @@ export const products: Product[] = [
       uk: ['Марка М500', 'Фасування 25 кг', 'Продаж мішками'],
       ru: ['Марка М500', 'Фасовка 25 кг', 'Продажа мешками'],
     },
-    image: '/catalog/products/cement-m500-25kg.jpeg',
+    image: '/catalog/products/cement-m500-25kg.png',
     status: 'available',
   },
   {
